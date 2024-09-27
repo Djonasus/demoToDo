@@ -1,0 +1,35 @@
+<!-- 1.1 Создать базовую разметку с укаказнием тегов и кратким описанием каждого -->
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Список дел" />
+    <!-- 2.1 Добавить стили -->
+    <link rel="stylesheet" href="./style.css" />
+    <!-- 3.1 Добавить скрипт -->
+    <script defer src="./index.js"></script>
+    <title>Список задач</title>
+  </head>
+  <body>
+    <!-- 1.2 Добавить контент для листа - поле для ввода задачи и сам список -->
+    <main class="todo">
+      <form name="task-form" class="todo__form form">
+        <label class="form__label" for="form-input"
+          >Введите новую задачу:</label
+        >
+        <input
+          type="text"
+          placeholder="Введите текст задачи"
+          required
+          aria-required="true"
+          name="task"
+          class="form__input"
+          id="form-input"
+        />
+        <button class="form__button form__button_add">Добавить</button>
+      </form>
+      <ul class="todo__list list"></ul>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,201 @@
+:root {
+  /* Основные цвета */
+  --color-background-dark: #0d0d0d;
+  --color-background-light: #1a1a1a;
+  --color-background-hover: #262626;
+  --color-text: #00e5ff;
+  --color-text-hover: #00f7ff;
+  --color-input-background: #262626;
+  --color-border: #00e5ff;
+  --color-border-hover: #00f7ff;
+  --color-button: #1b5e20;
+  --color-button-hover: #00f7ff;
+  --color-list-item-important: #004d40;
+  --color-list-item-important-hover: #00695c;
+  --color-list-item-completed: #333333;
+  --color-list-item-completed-hover: #4f4f4f;
+  --color-button-important: #ff6f00;
+  --color-button-important-hover: #ff8f00;
+  --color-button-delete: #d50000;
+  --color-button-delete-hover: #ff1744;
+  --color-text-important: #ffea00;
+  --color-text-completed: #9e9e9e;
+
+  /* Тени */
+  --shadow-neon: rgba(0, 229, 255, 0.3);
+  --shadow-neon-hover: rgba(0, 229, 255, 0.5);
+  --shadow-important: rgba(255, 234, 0, 0.4);
+  --shadow-important-hover: rgba(255, 234, 0, 0.7);
+}
+
+html,
+body {
+  margin: 0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  height: 100%;
+  background-color: var(--color-background-dark);
+  color: var(--color-text);
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  background-color: var(--color-background-light);
+  border-radius: 15px;
+  box-shadow: 0 0 20px var(--shadow-neon);
+}
+
+.form {
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto auto;
+  gap: 10px;
+  min-width: 320px;
+}
+
+.form__label {
+  font-size: 20px;
+  color: var(--color-text);
+}
+
+.form__input {
+  grid-row: 2;
+  grid-column: 1;
+  min-height: 35px;
+  min-width: 200px;
+  background-color: var(--color-input-background);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 5px;
+  color: #ffffff;
+}
+
+.form__input:hover {
+  border: 1px solid var(--color-border-hover);
+}
+
+.form__button {
+  grid-row: 2;
+  grid-column: 2;
+  background-color: var(--color-button);
+  border: none;
+  border-radius: 15px;
+  color: var(--color-text);
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 5px 10px;
+  transition: all 0.3s;
+}
+
+.form__button:hover {
+  background-color: var(--color-button-hover);
+  text-shadow: 0 0 10px var(--color-text-hover);
+  cursor: pointer;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 320px;
+  width: 100%;
+}
+
+.list__item {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto 30px;
+  gap: 5px;
+  color: #ffffff;
+  background-color: var(--color-background-light);
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px var(--shadow-neon);
+  transition: all 0.3s;
+}
+
+.list__item:hover {
+  background-color: var(--color-background-hover);
+  box-shadow: 0 0 20px var(--shadow-neon-hover);
+}
+
+.list__item_important {
+  color: var(--color-text-important);
+  background-color: var(--color-list-item-important);
+  box-shadow: 0 0 15px var(--shadow-important);
+}
+
+.list__item_important:hover {
+  background-color: var(--color-list-item-important-hover);
+  box-shadow: 0 0 20px var(--shadow-important-hover);
+}
+
+.list__item_completed {
+  color: var(--color-text-completed);
+  background-color: var(--color-list-item-completed);
+}
+
+.list__item_completed .list__text {
+  text-decoration: line-through;
+}
+
+.list__item_completed:hover {
+  background-color: var(--color-list-item-completed-hover);
+}
+
+.list__text {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  font-size: 16px;
+  font-weight: 500;
+  text-shadow: 0 0 5px var(--shadow-neon);
+}
+
+.list__button {
+  border: none;
+  border-radius: 15px;
+  color: #ffffff;
+  text-transform: uppercase;
+  background-color: var(--color-text);
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: all 0.3s;
+}
+
+.list__button:hover {
+  background-color: var(--color-text-hover);
+  text-shadow: 0 0 10px var(--color-text-hover);
+}
+
+.list__button_important {
+  background-color: var(--color-button-important);
+}
+
+.list__button_important:hover {
+  background-color: var(--color-button-important-hover);
+}
+
+.list__button_delete {
+  background-color: var(--color-button-delete);
+}
+
+.list__button_delete:hover {
+  background-color: var(--color-button-delete-hover);
+}
