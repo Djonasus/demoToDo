@@ -33,19 +33,23 @@ body {
   margin: 0;
   font-family: "Courier New", Courier, monospace;
   font-size: 14px;
-  min-height: 100%;
   background-color: var(--color-background-dark);
   color: var(--color-text);
+  height: 100%; 
 }
 
 html {
   box-sizing: border-box;
+  min-height: 100%;
 }
 
 body {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 100vh; 
+  width: 100%;
 }
 
 .todo {
