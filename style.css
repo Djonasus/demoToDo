@@ -35,12 +35,10 @@ body {
   font-size: 14px;
   background-color: var(--color-background-dark);
   color: var(--color-text);
-  height: 100%; 
 }
 
 html {
   box-sizing: border-box;
-  min-height: 100%;
 }
 
 body {
