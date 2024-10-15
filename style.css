@@ -120,6 +120,7 @@ body {
 
 .list__item {
   display: grid;
+  max-width: 400px;
   grid-template-columns: auto auto auto;
   grid-template-rows: auto 30px;
   gap: 5px;
