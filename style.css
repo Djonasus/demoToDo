@@ -130,7 +130,6 @@ body {
   border-radius: 15px;
   box-shadow: 0 0 15px var(--shadow-neon);
   transition: all 0.3s;
-  white-space: nowrap;
   overflow: hidden; 
   text-overflow: ellipsis; 
 }
