@@ -12,7 +12,7 @@ class ToDoApp {
   #init() {
     this.#findElements();
     this.#addListeners();
-    this.toolbar.style.display = 'none';
+    this.toolbar.classList.add('dont-render');
   }
 
   #findElements() {
@@ -52,71 +52,53 @@ class ToDoApp {
 
     this.#createListItem(value);
     
-    this.toolbar.style.display = 'flex';
+    this.toolbar.classList.remove('dont-render');
   }
 
   #handleSearchClick(e) {
     const input_value = this.searchItem.value;
     this.todoItems.forEach(tdi => {
-      tdi.reference.style.display = "grid";
+      tdi.reference.classList.remove("dont-render");
     });
     if (input_value !== "") {
       this.todoItems.forEach(tdi => {
         if (!tdi.name.includes(input_value)) {
-          tdi.reference.style.display = "none";
+          tdi.reference.classList.add("dont-render");
         }
       });
     }
   }
 
   #handleSortSelect(e) {
+    let sorter;
     switch (this.sortPrority.value) {
       case "no":
-        this.todoItems.sort((c1,c2) => c1.date.getTime() - c2.date.getTime());
+        sorter = new SorterByDate(this.todoItems, this.list);
         break;
 
       case "important":
-        this.todoItems.sort((c1,c2) => {
-          if (c1.important && !c2.important) {
-            return -1;
-          } else if (!c1.important && c2.important) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
+        sorter = new SorterByImportant(this.todoItems, this.list);
         break;
 
-        case "done":
-          this.todoItems.sort((c1,c2) => {
-            if (c1.done && !c2.done) {
-              return -1;
-            } else if (!c1.done && c2.done) {
-              return 1;
-            } else {
-              return 0;
-            }
-          });
-          break;
+      case "done":
+        sorter = new SorterByDone(this.todoItems, this.list);
+        break;
+
+      default:
+        sorter = new SorterByDate(this.todoItems, this.list);
+        break;
     }
-    let listItems = Array.from(this.list.children);
-    listItems.sort((a,b) => {
-      const indexA = this.todoItems.findIndex(item => item.reference === a);
-      const indexB = this.todoItems.findIndex(item => item.reference === b);
-  
-      return indexA - indexB;
-    });
-    listItems.forEach(item => this.list.appendChild(item));
+    sorter.sort();
   }
 
   #handleFilterClick () {
     this.todoItems.forEach(tdi => {
-      tdi.reference.style.display = 'grid';
-      if (this.filterImportant.checked == true && tdi.important != this.filterImportant.checked) {
-        tdi.reference.style.display = 'none';
+      tdi.reference.classList.remove("dont-render");
+      if (this.filterImportant.checked === true && tdi.important !== this.filterImportant.checked) {
+        tdi.reference.classList.add("dont-render");
       }
-      if (this.filterDone.checked == true && tdi.done != this.filterDone.checked) {
-        tdi.reference.style.display = 'none';
+      if (this.filterDone.checked === true && tdi.done !== this.filterDone.checked) {
+        tdi.reference.classList.add("dont-render");
       }
     });
   }
@@ -124,7 +106,7 @@ class ToDoApp {
   // End handlers
 
   #createListItem(value) {
-    const newItem = new ToDoItem(value);
+    const newItem = new ToDoItem(value, this);
     this.todoItems.push(newItem);
     this.list.appendChild(newItem.reference);
   }
@@ -133,16 +115,22 @@ class ToDoApp {
     t.reference.remove();
     this.todoItems.splice(this.todoItems.indexOf(t), 1);
     if (this.todoItems.length <= 0) {
-      this.toolbar.style.display = 'none';
+      this.toolbar.classList.add('dont-render');
     }
   }
 
 }
 
 class ToDoItem {
-  constructor(name) {
+  constructor(name, app_instance) {
     this.name = name;
     this.date = new Date();
+    
+    this.app = app_instance;
+
+    this.important = false;
+    this.done = false;
+
     const listItem = document.createElement("li");
     listItem.classList.add("list__item");
 
@@ -154,25 +142,25 @@ class ToDoItem {
       "list__button_important",
       "Важно"
     );
-    this.importantButton.addEventListener("click", this.#SwitchImportant.bind(this));
+    this.importantButton.addEventListener("click", this.#switchImportant.bind(this));
 
     this.completeButton = this.#createButton(
       "list__button_complete",
       "Выполнить"
     );
-    this.completeButton.addEventListener("click", this.#SwitchDone.bind(this));
+    this.completeButton.addEventListener("click", this.#switchDone.bind(this));
 
     this.deleteButton = this.#createButton("list__button_delete", "Удалить");
-    this.deleteButton.addEventListener("click", this.#RemoveButton.bind(this));
+    this.deleteButton.addEventListener("click", this.#removeButton.bind(this));
 
     listItem.append(textSpan, this.importantButton, this.completeButton, this.deleteButton);
     this.reference = listItem;
   }
 
-  #SwitchImportant() {
+  #switchImportant() {
     this.important = !this.important;
     this.reference.classList.toggle("list__item_important");
-        this.importantButton.innerText = this.important == true ? "Не важно" : "Важно";
+        this.importantButton.innerText = this.important === true ? "Не важно" : "Важно";
   }
 
   #createButton(buttonClass, buttonText) {
@@ -182,16 +170,75 @@ class ToDoItem {
     return button;
   }
 
-  #SwitchDone() {
+  #switchDone() {
     this.done = !this.done;
     this.reference.classList.toggle("list__item_completed");
         this.completeButton.innerText =
-          this.done == true ? "Не выполнено" : "Выполнить";
+          this.done === true ? "Не выполнено" : "Выполнить";
   }
 
-  #RemoveButton() {
-    app.deleteItem(this);
+  #removeButton() {
+    this.app.deleteItem(this);
   }
 }
 
-var app = new ToDoApp(document.querySelector(".todo"));
+// Sort Logic
+
+class Sorter {
+  constructor(obj, dom) {
+    this.obj = obj;
+    this.dom = dom;
+  }
+
+  sort() {
+    let listItems = Array.from(this.dom.children);
+    listItems.sort((a,b) => {
+      const indexA = this.obj.findIndex(item => item.reference === a);
+      const indexB = this.obj.findIndex(item => item.reference === b);
+  
+      return indexA - indexB;
+    });
+    listItems.forEach(item => this.dom.appendChild(item));
+  }
+}
+
+class SorterByDate extends Sorter {
+  sort() {
+    this.obj.sort((c1,c2) => c1.date.getTime() - c2.date.getTime())
+    super.sort()
+  }
+}
+
+class SorterByImportant extends Sorter {
+  sort() {
+    this.obj.sort((c1,c2) => {
+      if (c1.important && !c2.important) {
+        return -1;
+      } else if (!c1.important && c2.important) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    super.sort()
+  }
+}
+
+class SorterByDone extends Sorter {
+  sort() {
+    this.obj.sort((c1,c2) => {
+      if (c1.done && !c2.done) {
+        return -1;
+      } else if (!c1.done && c2.done) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    super.sort()
+  }
+}
+
+// Main Flow
+
+let app = new ToDoApp(document.querySelector(".todo"));

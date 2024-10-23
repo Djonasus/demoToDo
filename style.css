@@ -52,6 +52,10 @@ body {
   width: 100%;
 }
 
+.dont-render {
+  display: none !important;
+}
+
 .todo {
   display: flex;
   flex-direction: column;
